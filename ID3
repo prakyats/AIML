@@ -1,0 +1,65 @@
+import pandas as pd
+import seaborn as sns
+import matplotlib.pyplot as plt
+from sklearn.model_selection import train_test_split , GridSearchCV
+from sklearn import tree
+from sklearn.tree import DecisionTreeClassifier
+from sklearn.datasets import load_iris
+from sklearn.metrics import accuracy_score, classification_report , confusion_matrix
+
+iris= load_iris()
+iris
+
+iris.target
+
+df= sns.load_dataset('iris')
+
+#independent features and depnedent features
+X=df.iloc[:,:-1]
+y=iris.target #y=df.iloc[:,-1]
+X,y
+
+#train and split
+X_train, X_test, y_train, y_test= train_test_split(X,y, test_size=0.33, random_state=42)
+
+##Postpruning
+treemodel=DecisionTreeClassifier(max_depth=2)
+treemodel.fit(X_train, y_train)
+
+plt.figure(figsize=(15,10))
+tree.plot_tree(treemodel, filled=True)
+plt.show()
+
+#prediction
+y_pred= treemodel.predict(X_test)
+y_pred
+
+score=accuracy_score(y_pred, y_test)
+print(score)
+print(classification_report(y_pred,y_test))
+
+cm = confusion_matrix(y_test, y_pred)
+sns.heatmap(cm, annot=True )
+
+#preprunning
+parameter={
+    'criterion':['gini','entropy','log_loss'],
+    'splitter':['best','random'],
+    'max_depth':[1,2,3,4,5],
+    'max_features':['auto','sqrt','log2']
+}
+
+treemodel= DecisionTreeClassifier()
+cv= GridSearchCV(treemodel, param_grid= parameter, cv=5, scoring='accuracy')
+
+cv.fit(X_train, y_train)
+
+cv.best_params_
+
+y_pred= cv.predict(X_test)
+
+score= accuracy_score(y_pred, y_test)
+score
+
+print(classification_report(y_pred, y_test))
+
