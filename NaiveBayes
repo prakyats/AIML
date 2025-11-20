@@ -1,0 +1,39 @@
+import matplotlib.pyplot as plt
+from sklearn.datasets import load_iris
+from sklearn.model_selection import train_test_split
+from sklearn.naive_bayes import GaussianNB
+
+iris=load_iris()
+
+X = iris.data[:, :2]   # Use only 2 features for easy plotting
+y = iris.target
+
+X_train, X_test, y_train, y_test = train_test_split(X, y, test_size=0.3, random_state=42)
+
+# 3. Train Naive Bayes model
+# --------------------------------------
+model = GaussianNB()
+model.fit(X_train, y_train)
+
+# Predict on test data
+y_pred = model.predict(X_test)
+
+# 4. Scatter plot: Actual classes
+# --------------------------------------
+plt.figure(figsize=(6, 4))
+plt.scatter(X_test[:, 0], X_test[:, 1], c=y_test, edgecolor='k')
+plt.title("Actual Classes (Iris Dataset)")
+plt.xlabel("Sepal Length")
+plt.ylabel("Sepal Width")
+plt.show()
+
+# 5. Scatter plot: Predicted classes
+# --------------------------------------
+plt.figure(figsize=(6, 4))
+plt.scatter(X_test[:, 0], X_test[:, 1], c=y_pred, edgecolor='k')
+plt.title("Predicted Classes using Naive Bayes")
+plt.xlabel("Sepal Length")
+plt.ylabel("Sepal Width")
+plt.show()
+
+print("Accuracy:", model.score(X_test,y_test))
